@@ -1,4 +1,4 @@
-import streamlit as st
+ import streamlit as st
 import pandas as pd
 import numpy as np
 import plotly.express as px
@@ -7,14 +7,17 @@ import time
 from datetime import datetime
 
 # -----------------------------------------------------------------------------
-# PAGE CONFIGURATION
+# PAGE CONFIGURATION & SESSION STATE
 # -----------------------------------------------------------------------------
 st.set_page_config(
-    page_title="ADOS & DigiPort AI Platform - Excellence 98%",
-    page_icon="🛡️",
+    page_title="ADOS & DigiPort AI Platform - Le Détroit Smart Ports",
+    page_icon="⚓",
     layout="wide",
     initial_sidebar_state="expanded"
 )
+
+if 'audit_history' not in st.session_state:
+    st.session_state['audit_history'] = []
 
 # Custom CSS for polished layout and styling
 st.markdown("""
@@ -56,44 +59,57 @@ with st.sidebar:
     st.caption("Plateforme Souveraine SDC Hub | SIPORTS 2026")
     st.divider()
 
+    # Option 2: Language Switcher (Français / Arabe)
+    lang = st.selectbox("🌐 Langue / اللغة", ["Français", "العربية (Arabe)"])
+    
+    is_ar = (lang == "العربية (Arabe)")
+
     selected_module = st.radio(
-        "Sélectionnez un module :",
-        ["📊 Vue Globale & Dashboard", "🚛 Module 1: Logistique (Queue & Booking)", "🛡️ Module 2: Sécurité (Vision & CNGR)", "🔗 Module 3: Passerelle API PORTNET"]
+        "Sélectionnez un module :" if not is_ar else "اختر الوحدة :",
+        [
+            "📊 Vue Globale & Dashboard" if not is_ar else "📊 لوحة القيادة العامة", 
+            "🚛 Module 1: Logistique (Queue & Booking)" if not is_ar else "🚛 الوحدة 1: اللوجستيات والحجز الذكي", 
+            "🛡️ Module 2: Sécurité (Vision & CNGR)" if not is_ar else "🛡️ الوحدة 2: الأمن والرؤية الحاسوبية", 
+            "🔗 Module 3: Passerelle API PORTNET" if not is_ar else "🔗 الوحدة 3: بوابة PORTNET الرقمية"
+        ]
     )
     
     st.divider()
-    st.subheader("Paramètres Terminal & Corridor")
-    port_terminal = st.selectbox("Terminal Cible", ["Tanger Med - TC1 (Hub SDC)", "Tanger Med - TC2", "Port de Casablanca", "Nador West Med"])
-    target_excellence = st.slider("Cible d'Automatisation (%)", 90, 100, 98)
-    st.info(f"Terminal connecté: **{port_terminal}**\nStatut API PORTNET / ADII: **Optimisé (99.2%)**[span_2](start_span)[span_2](end_span)")
+    st.subheader("Paramètres du Détroit" if not is_ar else "إعدادات المضيق")
+    port_terminal = st.selectbox("Terminal Cible" if not is_ar else "المحطة المستهدفة", ["Tanger Med - TC1 (Hub SDC)", "Tanger Med - TC2", "Port de Casablanca", "Nador West Med"])
+    target_excellence = st.slider("Cible d'Automatisation (%)" if not is_ar else "هدف الأتمتة (%)", 90, 100, 98)
+    st.info(f"Terminal connecté: **{port_terminal}**\nStatut API PORTNET: **Optimisé (99.2%)**[span_1](start_span)[span_1](end_span)")
 
 # -----------------------------------------------------------------------------
-# HEADER
+# HEADER TEXT BASED ON LANGUAGE
 # -----------------------------------------------------------------------------
-st.markdown(f'<div class="main-header">🛡️ ADOS & DigiPort - {selected_module}</div>', unsafe_allow_html=True)
-st.markdown('<div class="sub-header">Système décisionnel unifié pour l\'arbitrage douanier, l\'optimisation des flux TangerMed et l\'interconnexion PortNet</div>', unsafe_allow_html=True)
+if not is_ar:
+    st.markdown(f'<div class="main-header">⚓ ADOS & DigiPort - {selected_module}</div>', unsafe_allow_html=True)
+    st.markdown('<div class="sub-header">Système décisionnel unifié pour l\'arbitrage douanier, l\'optimisation des flux TangerMed et l\'interconnexion PortNet (Faire vibrer le Détroit)</div>', unsafe_allow_html=True)
+else:
+    st.markdown(f'<div class="main-header" dir="rtl">⚓ منصة أدوس وديجي بورت - {selected_module}</div>', unsafe_allow_html=True)
+    st.markdown('<div class="sub-header" dir="rtl">نظام قرار موحد لتحسين التدفقات الجمركية بميناء طنجة المتوسط والربط الذكي مع بوابة فورتنيت</div>', unsafe_allow_html=True)
 
 # -----------------------------------------------------------------------------
 # MODULE 0: VUE GLOBALE & DASHBOARD
 # -----------------------------------------------------------------------------
-if selected_module == "📊 Vue Globale & Dashboard":
-    # Top KPI Metrics aligned with ADOS targets
+if selected_module in ["📊 Vue Globale & Dashboard", "📊 لوحة القيادة العامة"]:
     col1, col2, col3, col4 = st.columns(4)
     with col1:
-        st.metric("Conformité CNGR (Cible 98%+)", "99.2%", "+14.2% vs Baseline", delta_color="normal")
+        st.metric("Conformité CNGR (Cible 98%+)" if not is_ar else "مؤشر المطابقة CNGR", "99.2%", "+14.2% vs Baseline" if not is_ar else "+14.2%", delta_color="normal")
     with col2:
-        st.metric("Délai Moyen Déclaration", "5 min", "-35 min (AI Agent)", delta_color="inverse")
+        st.metric("Délai Moyen Déclaration" if not is_ar else "متوسط وقت التصريح", "5 min", "-35 min (AI Agent)" if not is_ar else "-35 دقيقة", delta_color="inverse")
     with col3:
-        st.metric("Taux DUM Automatisées", f"{target_excellence}.0%", f"+{target_excellence - 80}% Objectif")
+        st.metric("Taux DUM Automatisées" if not is_ar else "نسبة DUM الآلية", f"{target_excellence}.0%", f"+{target_excellence - 80}% Objectif" if not is_ar else "الهدف")
     with col4:
-        st.metric("Flux Traités (Corridor SDC)", "+50M USD", "Traçabilité 100%[span_3](start_span)[span_3](end_span)")
+        st.metric("Flux Traités (Corridor SDC)" if not is_ar else "التدفقات التجارية", "+50M USD", "Traçabilité 100%[span_2](start_span)[span_2](end_span)")
 
     st.divider()
 
     col_chart1, col_chart2 = st.columns(2)
     
     with col_chart1:
-        st.subheader("📈 Trajectoire de Conformité & Automatisation BADR")
+        st.subheader("📈 Trajectoire de Conformité & Automatisation BADR" if not is_ar else "📈 مسار المطابقة والأتمتة")
         months = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai (Go-Live)', 'Juin', 'Juil', 'Août']
         perf_data = pd.DataFrame({
             "Mois": months,
@@ -106,7 +122,7 @@ if selected_module == "📊 Vue Globale & Dashboard":
         st.plotly_chart(fig_perf, use_container_width=True)
 
     with col_chart2:
-        st.subheader("🌐 Répartition Sectorielle des Flux (Corridor China-Morocco / AfCFTA)")
+        st.subheader("🌐 Répartition Sectorielle des Flux (Corridor China-Morocco / AfCFTA)" if not is_ar else "🌐 توزيع التدفقات حسب القطاعات")
         sectors = pd.DataFrame({
             "Secteur": ["Automobile (HS 87)", "Pharma/Biotech (HS 30)", "Green Energy (HS 28)", "Aéronautique (HS 88)", "Agro-Premium (HS 04)"],
             "Volume (%)": [35, 25, 20, 12, 8]
@@ -116,15 +132,35 @@ if selected_module == "📊 Vue Globale & Dashboard":
         fig_sec.update_layout(height=350, margin=dict(l=20, r=20, t=20, b=20))
         st.plotly_chart(fig_sec, use_container_width=True)
 
+    # Option 1: Export PDF / Rapport d'Audit Officiel
+    st.divider()
+    st.subheader("📑 Générateur de Rapport d'Audit Exécutif (Export Officiel)" if not is_ar else "📑 تقرير التدقيق التنفيذي")
+    if st.button("📥 Générer le Rapport PDF de Synthèse SIPORTS 2026" if not is_ar else "📥 تحميل تقرير المؤتمر"):
+        with st.spinner("Compilation des indicateurs du détroit..."):
+            time.sleep(0.8)
+        report_text = f"""--- RAPPORT OFFICIEL ADOS & DIGIPORT ---
+Terminal: {port_terminal}
+Date: {datetime.now().strftime('%Y-%m-%d %H:%M')}
+Conformité CNGR: 99.2%[span_3](start_span)[span_3](end_span)
+Délai Déclaration: 5 min[span_4](start_span)[span_4](end_span)
+Volume Corridor: +50M USD[span_5](start_span)[span_5](end_span)
+Statut: Validé pour Excellence Opérationnelle SIPORTS 2026
+-------------------------------------------"""
+        st.success("✅ Rapport d'audit généré avec succès !")
+        st.download_button(
+            label="Télécharger le fichier .txt du Rapport",
+            data=report_text,
+            file_name=f"Rapport_Audit_ADOS_{port_terminal.replace(' ', '_')}.txt",
+            mime="text/plain"
+        )
+
 # -----------------------------------------------------------------------------
 # MODULE 1: LOGISTIQUE (QUEUE & BOOKING)
 # -----------------------------------------------------------------------------
-elif selected_module == "🚛 Module 1: Logistique (Queue & Booking)":
+elif selected_module in ["🚛 Module 1: Logistique (Queue & Booking)", "🚛 الوحدة 1: اللوجستيات والحجز الذكي"]:
     st.subheader("🎯 Optimisation Stochastique des Files d'Attente & Smart Booking")
-    st.write("Régulation intelligente des flux de camions pour maintenir un taux de service supérieur à 98%.")
-
-    col_input, col_sim = st.columns([1, 2])
     
+    col_input, col_sim = st.columns([1, 2])
     with col_input:
         st.markdown("### ⚙️ Paramètres de Flux")
         arrival_rate = st.slider("Taux d'arrivée (camions/heure)", 10, 100, 45)
@@ -143,9 +179,8 @@ elif selected_module == "🚛 Module 1: Logistique (Queue & Booking)":
         st.markdown("### 📊 Résultats de la Simulation Avancée")
         res_col1, res_col2 = st.columns(2)
         res_col1.metric("Dwell Time Classique", "52 min")
-        res_col2.metric("Dwell Time Optimisé (DigiPort)", f"{int(optimized_wait + 12)} min", f"-{int(52 - (optimized_wait + 12))} min (Objectif <40h)", delta_color="inverse")
+        res_col2.metric("Dwell Time Optimisé (DigiPort)", f"{int(optimized_wait + 12)} min", f"-{int(52 - (optimized_wait + 12))} min", delta_color="inverse")
         
-        st.markdown("#### 📅 Lissage Dynamique des Créneaux Horaires")
         slots = [f"{h:02d}:00" for h in range(8, 18)]
         df_slots = pd.DataFrame({
             "Heure": slots,
@@ -159,12 +194,10 @@ elif selected_module == "🚛 Module 1: Logistique (Queue & Booking)":
 # -----------------------------------------------------------------------------
 # MODULE 2: SÉCURITÉ (COMPUTER VISION & CNGR)
 # -----------------------------------------------------------------------------
-elif selected_module == "🛡️ Module 2: Sécurité (Vision & CNGR)":
+elif selected_module in ["🛡️ Module 2: Sécurité (Vision & CNGR)", "🛡️ الوحدة 2: الأمن والرؤية الحاسوبية"]:
     st.subheader("👁️ Inspection Numérique & Validation Automatique CNGR / HS Codes")
-    st.write("Module propulsé par l'IA Custom-PortNet Agent pour l'analyse instantanée des déclarations et des scellés.")
-
-    col_cam, col_data = st.columns([1.2, 1])
     
+    col_cam, col_data = st.columns([1.2, 1])
     with col_cam:
         st.markdown("### 📹 Caméra de Contrôle Gate - Flux Temps Réel")
         container_input = st.selectbox("Sélectionner un conteneur cible :", ["MSCU1234567 (Auto)", "CMAU9876543 (Pharma)", "HLXU5551234 (Green Energy)", "TGBU8821903 (Aéro)"])
@@ -183,19 +216,31 @@ elif selected_module == "🛡️ Module 2: Sécurité (Vision & CNGR)":
             st.markdown(f"**ID Conteneur :** `{container_input}`")
             st.markdown(f"**Reconnaissance OCR Plaque/Code :** `Validé (99.4%)`")
             st.markdown("**Conformité Nomenclature CNGR :** <span class='status-badge-success'>99.2% - CONFORME</span>", unsafe_allow_html=True)
-            st.success("✅ Statut : Validation instantanée des droits 0% (Accords multilatéraux actifs). BAE généré.")
+            st.success("✅ Statut : Validation instantanée des droits 0%. BAE généré.")
+            
+            # Save to Session State (Option 3: Real-time simulation log history)
+            st.session_state['audit_history'].append({
+                "Timestamp": datetime.now().strftime("%H:%M:%S"),
+                "Container": container_input,
+                "Status": "Conforme 99.2%"
+            })
         else:
             st.info("Cliquez sur le bouton pour simuler l'inspection et l'apurement douanier instantané.")
+
+    # Display real-time session logs (Option 3)
+    if st.session_state['audit_history']:
+        st.divider()
+        st.subheader("📜 Journal d'Historique des Simulations de Session")
+        df_history = pd.DataFrame(st.session_state['audit_history'])
+        st.dataframe(df_history, use_container_width=True)
 
 # -----------------------------------------------------------------------------
 # MODULE 3: PASSERELLE API PORTNET
 # -----------------------------------------------------------------------------
-elif selected_module == "🔗 Module 3: Passerelle API PORTNET":
+elif selected_module in ["🔗 Module 3: Passerelle API PORTNET", "🔗 الوحدة 3: بوابة PORTNET الرقمية"]:
     st.subheader("🌐 Passerelle SDC Hub & Interconnexion Guichet Unique PORTNET")
-    st.write("Transmission sécurisée des données de dédouanement et des certificats d'origine vers l'infrastructure ADII.")
-
-    col_payload, col_response = st.columns(2)
     
+    col_payload, col_response = st.columns(2)
     with col_payload:
         st.markdown("### 📤 Payload JSON (API SDC Hub)")
         sample_payload = {
@@ -208,7 +253,7 @@ elif selected_module == "🔗 Module 3: Passerelle API PORTNET":
                 "reference": "DUM-2026-TGR-9982",
                 "hs_code": "8704.21",
                 "regime_economique": "RED_ATELIER",
-                "tariff_preference": "0% China-Morocco[span_4](start_span)[span_4](end_span)"
+                "tariff_preference": "0% China-Morocco[span_6](start_span)[span_6](end_span)"
             }
         }
         st.json(sample_payload)
@@ -236,5 +281,4 @@ elif selected_module == "🔗 Module 3: Passerelle API PORTNET":
 # FOOTER
 # -----------------------------------------------------------------------------
 st.divider()
-st.caption("ADOS & DigiPort Platform © 2026 - Conçu par Salah Bekkari | Expert Déclarant en Douane & Consultant PortNet[span_5](start_span)[span_5](end_span) (SIPORTS 2026)")
- 
+st.caption("ADOS & DigiPort Platform © 2026 - Conçu par Salah Bekkari | Expert Déclarant en Douane & Consultant PortNet[span_7](start_span)[span_7](end_span) (SIPORTS 2026)")
