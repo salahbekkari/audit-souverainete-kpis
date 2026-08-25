@@ -1,4 +1,4 @@
- import streamlit as st
+import streamlit as st
 import pandas as pd
 import numpy as np
 import plotly.express as px
@@ -59,9 +59,7 @@ with st.sidebar:
     st.caption("Plateforme Souveraine SDC Hub | SIPORTS 2026")
     st.divider()
 
-    # Option 2: Language Switcher (Français / Arabe)
     lang = st.selectbox("🌐 Langue / اللغة", ["Français", "العربية (Arabe)"])
-    
     is_ar = (lang == "العربية (Arabe)")
 
     selected_module = st.radio(
@@ -78,7 +76,7 @@ with st.sidebar:
     st.subheader("Paramètres du Détroit" if not is_ar else "إعدادات المضيق")
     port_terminal = st.selectbox("Terminal Cible" if not is_ar else "المحطة المستهدفة", ["Tanger Med - TC1 (Hub SDC)", "Tanger Med - TC2", "Port de Casablanca", "Nador West Med"])
     target_excellence = st.slider("Cible d'Automatisation (%)" if not is_ar else "هدف الأتمتة (%)", 90, 100, 98)
-    st.info(f"Terminal connecté: **{port_terminal}**\nStatut API PORTNET: **Optimisé (99.2%)**[span_1](start_span)[span_1](end_span)")
+    st.info(f"Terminal connecté: **{port_terminal}**\nStatut API PORTNET: **Optimisé (99.2%)**")
 
 # -----------------------------------------------------------------------------
 # HEADER TEXT BASED ON LANGUAGE
@@ -96,20 +94,20 @@ else:
 if selected_module in ["📊 Vue Globale & Dashboard", "📊 لوحة القيادة العامة"]:
     col1, col2, col3, col4 = st.columns(4)
     with col1:
-        st.metric("Conformité CNGR (Cible 98%+)" if not is_ar else "مؤشر المطابقة CNGR", "99.2%", "+14.2% vs Baseline" if not is_ar else "+14.2%", delta_color="normal")
+        st.metric("Conformité CNGR (Cible 98%+)", "99.2%", "+14.2% vs Baseline", delta_color="normal")
     with col2:
-        st.metric("Délai Moyen Déclaration" if not is_ar else "متوسط وقت التصريح", "5 min", "-35 min (AI Agent)" if not is_ar else "-35 دقيقة", delta_color="inverse")
+        st.metric("Délai Moyen Déclaration", "5 min", "-35 min (AI Agent)", delta_color="inverse")
     with col3:
-        st.metric("Taux DUM Automatisées" if not is_ar else "نسبة DUM الآلية", f"{target_excellence}.0%", f"+{target_excellence - 80}% Objectif" if not is_ar else "الهدف")
+        st.metric("Taux DUM Automatisées", f"{target_excellence}.0%", f"+{target_excellence - 80}% Objectif")
     with col4:
-        st.metric("Flux Traités (Corridor SDC)" if not is_ar else "التدفقات التجارية", "+50M USD", "Traçabilité 100%[span_2](start_span)[span_2](end_span)")
+        st.metric("Flux Traités (Corridor SDC)", "+50M USD", "Traçabilité 100%")
 
     st.divider()
 
     col_chart1, col_chart2 = st.columns(2)
     
     with col_chart1:
-        st.subheader("📈 Trajectoire de Conformité & Automatisation BADR" if not is_ar else "📈 مسار المطابقة والأتمتة")
+        st.subheader("📈 Trajectoire de Conformité & Automatisation BADR")
         months = ['Jan', 'Fév', 'Mar', 'Avr', 'Mai (Go-Live)', 'Juin', 'Juil', 'Août']
         perf_data = pd.DataFrame({
             "Mois": months,
@@ -122,7 +120,7 @@ if selected_module in ["📊 Vue Globale & Dashboard", "📊 لوحة القيا
         st.plotly_chart(fig_perf, use_container_width=True)
 
     with col_chart2:
-        st.subheader("🌐 Répartition Sectorielle des Flux (Corridor China-Morocco / AfCFTA)" if not is_ar else "🌐 توزيع التدفقات حسب القطاعات")
+        st.subheader("🌐 Répartition Sectorielle des Flux (Corridor China-Morocco / AfCFTA)")
         sectors = pd.DataFrame({
             "Secteur": ["Automobile (HS 87)", "Pharma/Biotech (HS 30)", "Green Energy (HS 28)", "Aéronautique (HS 88)", "Agro-Premium (HS 04)"],
             "Volume (%)": [35, 25, 20, 12, 8]
@@ -132,18 +130,17 @@ if selected_module in ["📊 Vue Globale & Dashboard", "📊 لوحة القيا
         fig_sec.update_layout(height=350, margin=dict(l=20, r=20, t=20, b=20))
         st.plotly_chart(fig_sec, use_container_width=True)
 
-    # Option 1: Export PDF / Rapport d'Audit Officiel
     st.divider()
-    st.subheader("📑 Générateur de Rapport d'Audit Exécutif (Export Officiel)" if not is_ar else "📑 تقرير التدقيق التنفيذي")
-    if st.button("📥 Générer le Rapport PDF de Synthèse SIPORTS 2026" if not is_ar else "📥 تحميل تقرير المؤتمر"):
+    st.subheader("📑 Générateur de Rapport d'Audit Exécutif (Export Officiel)")
+    if st.button("📥 Générer le Rapport PDF de Synthèse SIPORTS 2026"):
         with st.spinner("Compilation des indicateurs du détroit..."):
             time.sleep(0.8)
         report_text = f"""--- RAPPORT OFFICIEL ADOS & DIGIPORT ---
 Terminal: {port_terminal}
 Date: {datetime.now().strftime('%Y-%m-%d %H:%M')}
-Conformité CNGR: 99.2%[span_3](start_span)[span_3](end_span)
-Délai Déclaration: 5 min[span_4](start_span)[span_4](end_span)
-Volume Corridor: +50M USD[span_5](start_span)[span_5](end_span)
+Conformité CNGR: 99.2%
+Délai Déclaration: 5 min
+Volume Corridor: +50M USD
 Statut: Validé pour Excellence Opérationnelle SIPORTS 2026
 -------------------------------------------"""
         st.success("✅ Rapport d'audit généré avec succès !")
@@ -218,7 +215,6 @@ elif selected_module in ["🛡️ Module 2: Sécurité (Vision & CNGR)", "🛡�
             st.markdown("**Conformité Nomenclature CNGR :** <span class='status-badge-success'>99.2% - CONFORME</span>", unsafe_allow_html=True)
             st.success("✅ Statut : Validation instantanée des droits 0%. BAE généré.")
             
-            # Save to Session State (Option 3: Real-time simulation log history)
             st.session_state['audit_history'].append({
                 "Timestamp": datetime.now().strftime("%H:%M:%S"),
                 "Container": container_input,
@@ -227,7 +223,6 @@ elif selected_module in ["🛡️ Module 2: Sécurité (Vision & CNGR)", "🛡�
         else:
             st.info("Cliquez sur le bouton pour simuler l'inspection et l'apurement douanier instantané.")
 
-    # Display real-time session logs (Option 3)
     if st.session_state['audit_history']:
         st.divider()
         st.subheader("📜 Journal d'Historique des Simulations de Session")
@@ -253,7 +248,7 @@ elif selected_module in ["🔗 Module 3: Passerelle API PORTNET", "🔗 الوح
                 "reference": "DUM-2026-TGR-9982",
                 "hs_code": "8704.21",
                 "regime_economique": "RED_ATELIER",
-                "tariff_preference": "0% China-Morocco[span_6](start_span)[span_6](end_span)"
+                "tariff_preference": "0% China-Morocco"
             }
         }
         st.json(sample_payload)
@@ -281,4 +276,4 @@ elif selected_module in ["🔗 Module 3: Passerelle API PORTNET", "🔗 الوح
 # FOOTER
 # -----------------------------------------------------------------------------
 st.divider()
-st.caption("ADOS & DigiPort Platform © 2026 - Conçu par Salah Bekkari | Expert Déclarant en Douane & Consultant PortNet[span_7](start_span)[span_7](end_span) (SIPORTS 2026)")
+st.caption("ADOS & DigiPort Platform © 2026 - Conçu par Salah Bekkari | Expert Déclarant en Douane & Consultant PortNet (SIPORTS 2026)")
